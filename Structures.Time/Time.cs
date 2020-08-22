@@ -1,0 +1,126 @@
+﻿using System;
+using System.Text.Json.Serialization;
+
+namespace Structures.Time
+{
+    /// <summary>
+    /// Time represents point in time of a day
+    /// </summary>
+    [JsonConverter(typeof(TimeJsonConverter))]
+    public struct Time : IComparable, IComparable<Time>, IEquatable<Time>
+    {
+        private int _hour;
+        private int _minute;
+        private int _seconds;
+
+        public Time(int hour = 0, int minute = 0, int seconds = 0)
+        {
+            _hour = hour >= 0 && hour <= 24 ? hour : throw new ArgumentOutOfRangeException("Hour out of range"); ;
+            _minute = minute >= 0 && minute <= 60 ? minute : throw new ArgumentOutOfRangeException("Minute out of range"); ;
+            _seconds = seconds >= 0 && seconds <= 60 ? seconds : throw new ArgumentOutOfRangeException("Seconds out of range"); ;
+        }
+
+        /// <summary>
+        /// Sets hours, 0 to 24
+        /// </summary>
+        public int Hour 
+        { 
+            get => _hour; 
+            set => _hour = value >= 0 && value <= 24 ? value : throw new ArgumentOutOfRangeException("Hour out of range"); 
+        }
+
+        /// <summary>
+        /// Sets minutes, 0 to 60
+        /// </summary>
+        public int Minute 
+        { 
+            get => _minute; 
+            set => _minute = value >= 0 && value <= 60 ? value : throw new ArgumentOutOfRangeException("Minute out of range");
+        }
+
+        /// <summary>
+        /// Sets seconds, 0 to 60
+        /// </summary>
+        public int Seconds 
+        { 
+            get => _seconds; 
+            set => _seconds = value >= 0 && value <= 60 ? value : throw new ArgumentOutOfRangeException("Seconds out of range");
+        }
+
+        public static implicit operator Time(int hour) => new Time(hour, 0);
+
+        public static implicit operator Time(double time)
+        {
+            var span = TimeSpan.FromHours(time);
+            return new Time(span.Hours, span.Minutes, span.Seconds);
+        }
+
+        public static implicit operator Time(DateTime time) => new Time(time.Hour, time.Minute, time.Second);
+
+        /// <summary>
+        /// Format hours:minutes:seconds
+        /// </summary>
+        /// <param name="time">Hour:Minute</param>
+        public static implicit operator Time(string time)
+        {
+            if (string.IsNullOrWhiteSpace(time)) return new Time();
+
+            var parts = time.Split(':');
+
+            return new Time(
+                Convert.ToInt32(parts[0]),
+                parts.Length > 1 ? Convert.ToInt32(parts[1]) : 0,
+                parts.Length > 2 ? Convert.ToInt32(parts[2]) : 0);
+        }
+
+        public static bool operator >(Time first, Time second) =>
+            first.Hour > second.Hour || first.Hour == second.Hour &&
+            (first.Minute > second.Minute || first.Minute == second.Minute && first.Seconds > second.Seconds);
+
+        public static bool operator <(Time first, Time second) => !(first > second);
+        public static bool operator ==(Time first, Time second) => first.Hour == second.Hour && first.Minute == second.Minute && first.Seconds == second.Seconds;
+        public static bool operator !=(Time first, Time second) => !(first == second);
+        public static bool operator >=(Time first, Time second) => first == second || first > second;
+        public static bool operator <=(Time first, Time second) => first == second || first < second;
+
+        public int TotalSeconds { get => Seconds + Minute * 60 + Hour * 60 * 60; }
+        public double TotalMinutes { get => Hour * 60d + Minute + Seconds / 60d; }
+        public double TotalHours { get => Hour + Minute / 60d + Seconds / 60d / 60d; }
+
+        public override string ToString() => $"{Hour}:{Minute}:{Seconds}";
+
+        public void Deconstruct(out int hour, out int minute, out int seconds)
+        {
+            hour = Hour;
+            minute = Minute;
+            seconds = Seconds;
+        }
+
+        public override bool Equals(object obj) => obj is Time time && TotalSeconds == time.TotalSeconds;
+        public override int GetHashCode() => -321205630 + TotalSeconds.GetHashCode();
+
+        public int CompareTo(object value)
+        {
+            if (value == null) return 1;
+            if (!(value is Time)) throw new ArgumentException("Value must be Time");
+
+            var time = (Time)value;
+
+            if (this > time) return 1;
+            if (this < time) return -1;
+            return 0;
+        }
+
+        public int CompareTo(Time time)
+        {
+            if (this > time) return 1;
+            if (this < time) return -1;
+            return 0;
+        }
+
+        public bool Equals(Time other)
+        {
+            return other == this;
+        }
+    }
+}
