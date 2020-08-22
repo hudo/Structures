@@ -5,6 +5,8 @@
     <Authors>Hrvoje Hudo</Authors>
     <Company />
     <Description>Time data structure</Description>
+    <PackageProjectUrl>https://github.com/hudo/Structures</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hudo/Structures</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

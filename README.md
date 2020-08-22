@@ -1,7 +1,9 @@
-# Time structure
+# Data structures
+
+## Time structure
 
 This data structure represents point in time of a day. Semantically it's different than **TimeSpan** because it's not a duration, 
-but rather a point in time, and supports some additional operators. Like DateTime just without a Date component. 
+but rather a point in time, with support of some additional operators. Like DateTime just without a Date component. 
 
 ## Usage examples
 
@@ -32,4 +34,4 @@ Time time = JsonSerializer.Deserialize<Time>("\"5:20\"");
 
 ## Package
 
-TODO
+https://www.nuget.org/packages/Structures.Time
