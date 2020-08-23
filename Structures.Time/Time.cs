@@ -15,9 +15,9 @@ namespace Structures.Time
 
         public Time(int hour = 0, int minute = 0, int seconds = 0)
         {
-            _hour = hour >= 0 && hour <= 24 ? hour : throw new ArgumentOutOfRangeException("Hour out of range"); ;
-            _minute = minute >= 0 && minute <= 60 ? minute : throw new ArgumentOutOfRangeException("Minute out of range"); ;
-            _seconds = seconds >= 0 && seconds <= 60 ? seconds : throw new ArgumentOutOfRangeException("Seconds out of range"); ;
+            _hour = Validate(hour, 24, nameof(Hour));
+            _minute = Validate(minute, 60, nameof(Minute));
+            _seconds = Validate(seconds, 60, nameof(Seconds));
         }
 
         /// <summary>
@@ -25,8 +25,8 @@ namespace Structures.Time
         /// </summary>
         public int Hour 
         { 
-            get => _hour; 
-            set => _hour = value >= 0 && value <= 24 ? value : throw new ArgumentOutOfRangeException("Hour out of range"); 
+            get => _hour;
+            set => _hour = Validate(value, 24, nameof(Hour));
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace Structures.Time
         /// </summary>
         public int Minute 
         { 
-            get => _minute; 
-            set => _minute = value >= 0 && value <= 60 ? value : throw new ArgumentOutOfRangeException("Minute out of range");
+            get => _minute;
+            set => _minute = Validate(value, 60, nameof(Minute));
         }
 
         /// <summary>
@@ -43,9 +43,13 @@ namespace Structures.Time
         /// </summary>
         public int Seconds 
         { 
-            get => _seconds; 
-            set => _seconds = value >= 0 && value <= 60 ? value : throw new ArgumentOutOfRangeException("Seconds out of range");
+            get => _seconds;
+            set => _seconds = Validate(value, 60, nameof(Seconds));
         }
+
+        private static int Validate(int value, int maxValue, string fieldName) =>
+            value >= 0 && value <= maxValue ? value : throw new ArgumentOutOfRangeException($"{fieldName} out of range");
+
 
         public static implicit operator Time(int hour) => new Time(hour, 0);
 

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 
 namespace Structures.Time.Tests
 {
@@ -73,6 +74,14 @@ namespace Structures.Time.Tests
             Assert.AreEqual(-1, second.CompareTo(first));
             Assert.AreEqual(1, first.CompareTo(second));
             Assert.IsFalse(first.Equals(second));
+        }
+
+        [Test]
+        public void Throw_exception_wrong_values()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Time(25));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Time(24, 61));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Time(24, 0, 61));
         }
     }
 }
